@@ -1,251 +1,95 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-  <title>单例模式 | 前端-小婷婷个人主页</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="前端路上的一名前端菜菜，为了对自己每一次学习有一个深刻的记忆和总结，早日脱离菜菜队伍，就从下面开始吧。
-单例模式的定义：保证一个类仅有一个实例，并提供一个访问它的全局点；那下面跟着我一步一步学习，希望能对你有所帮助，同时也是对自己学习的一个复习总结的过程。
-实现单例模式要实现一个单例模式并不是很复杂，无非是用一个变量来标注是否为某类创建对象，如果是，则在下一次获取类的实例时，返回该类已经创建的对象">
-<meta property="og:type" content="article">
-<meta property="og:title" content="单例模式">
-<meta property="og:url" content="http://yutingting945718425.github.io/2017/04/09/singleCase/index.html">
-<meta property="og:site_name" content="前端-小婷婷个人主页">
-<meta property="og:description" content="前端路上的一名前端菜菜，为了对自己每一次学习有一个深刻的记忆和总结，早日脱离菜菜队伍，就从下面开始吧。
-单例模式的定义：保证一个类仅有一个实例，并提供一个访问它的全局点；那下面跟着我一步一步学习，希望能对你有所帮助，同时也是对自己学习的一个复习总结的过程。
-实现单例模式要实现一个单例模式并不是很复杂，无非是用一个变量来标注是否为某类创建对象，如果是，则在下一次获取类的实例时，返回该类已经创建的对象">
-<meta property="og:updated_time" content="2017-04-10T09:21:42.000Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="单例模式">
-<meta name="twitter:description" content="前端路上的一名前端菜菜，为了对自己每一次学习有一个深刻的记忆和总结，早日脱离菜菜队伍，就从下面开始吧。
-单例模式的定义：保证一个类仅有一个实例，并提供一个访问它的全局点；那下面跟着我一步一步学习，希望能对你有所帮助，同时也是对自己学习的一个复习总结的过程。
-实现单例模式要实现一个单例模式并不是很复杂，无非是用一个变量来标注是否为某类创建对象，如果是，则在下一次获取类的实例时，返回该类已经创建的对象">
-  
-    <link rel="alternative" href="/atom.xml" title="前端-小婷婷个人主页" type="application/atom+xml">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  <link rel="stylesheet" href="/css/style.css">
-</head>
-
-<body>
-  <div id="container">
-    <div class="left-col">
-    <div class="overlay"></div>
-<div class="intrude-less">
-	<header id="header" class="inner">
-		<a href="/" class="profilepic">
-			
-			<img lazy-src="null" class="js-avatar">
-			
-		</a>
-
-		<hgroup>
-		  <h1 class="header-author"><a href="/">前端-小婷婷</a></h1>
-		</hgroup>
-
-		
-
-		
-			<div class="switch-btn">
-				<div class="icon">
-					<div class="icon-ctn">
-						<div class="icon-wrap icon-house" data-idx="0">
-							<div class="birdhouse"></div>
-							<div class="birdhouse_holes"></div>
-						</div>
-						<div class="icon-wrap icon-ribbon hide" data-idx="1">
-							<div class="ribbon"></div>
-						</div>
-						
-						<div class="icon-wrap icon-link hide" data-idx="2">
-							<div class="loopback_l"></div>
-							<div class="loopback_r"></div>
-						</div>
-						
-						
-						<div class="icon-wrap icon-me hide" data-idx="3">
-							<div class="user"></div>
-							<div class="shoulder"></div>
-						</div>
-						
-					</div>
-					
-				</div>
-				<div class="tips-box hide">
-					<div class="tips-arrow"></div>
-					<ul class="tips-inner">
-						<li>菜单</li>
-						<li>标签</li>
-						
-						<li>友情链接</li>
-						
-						
-						<li>关于我</li>
-						
-					</ul>
-				</div>
-			</div>
-		
-
-		<div class="switch-area">
-			<div class="switch-wrap">
-				<section class="switch-part switch-part1">
-					<nav class="header-menu">
-						<ul>
-						
-							<li><a href="/">主页</a></li>
-				        
-							<li><a href="/archives">所有文章</a></li>
-				        
-						</ul>
-					</nav>
-					<nav class="header-nav">
-						<div class="social">
-							
-								<a class="github" target="_blank" href="#" title="github">github</a>
-					        
-								<a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
-					        
-								<a class="rss" target="_blank" href="#" title="rss">rss</a>
-					        
-								<a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
-					        
-						</div>
-					</nav>
-				</section>
-				
-				
-				<section class="switch-part switch-part2">
-					<div class="widget tagcloud" id="js-tagcloud">
-						
-					</div>
-				</section>
-				
-				
-				
-				<section class="switch-part switch-part3">
-					<div id="js-friends">
-					
-			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">奥巴马的博客</a>
-			        
-			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">卡卡的美丽传说</a>
-			        
-			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">本泽马的博客</a>
-			        
-			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">吉格斯的博客</a>
-			        
-			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">习大大大不同</a>
-			        
-			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">托蒂的博客</a>
-			        
-			        </div>
-				</section>
-				
-
-				
-				
-				<section class="switch-part switch-part4">
-				
-					<div id="js-aboutme">我是谁，我从哪里来，我到哪里去？我就是我，是颜色不一样的吃货…</div>
-				</section>
-				
-			</div>
-		</div>
-	</header>				
-</div>
-
-    </div>
-    <div class="mid-col">
-      <nav id="mobile-nav">
-  	<div class="overlay">
-  		<div class="slider-trigger"></div>
-  		<h1 class="header-author js-mobile-header hide">前端-小婷婷</h1>
-  	</div>
-	<div class="intrude-less">
-		<header id="header" class="inner">
-			<div class="profilepic">
-			
-				<img lazy-src="null" class="js-avatar">
-			
-			</div>
-			<hgroup>
-			  <h1 class="header-author">前端-小婷婷</h1>
-			</hgroup>
-			
-			<nav class="header-menu">
-				<ul>
-				
-					<li><a href="/">主页</a></li>
-		        
-					<li><a href="/archives">所有文章</a></li>
-		        
-		        <div class="clearfix"></div>
-				</ul>
-			</nav>
-			<nav class="header-nav">
-				<div class="social">
-					
-						<a class="github" target="_blank" href="#" title="github">github</a>
-			        
-						<a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
-			        
-						<a class="rss" target="_blank" href="#" title="rss">rss</a>
-			        
-						<a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
-			        
-				</div>
-			</nav>
-		</header>				
-	</div>
-</nav>
-
-      <div class="body-wrap"><article id="post-singleCase" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2017/04/09/singleCase/" class="article-date">
-  	<time datetime="2017-04-09T07:20:18.000Z" itemprop="datePublished">2017-04-09</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      单例模式
-    </h1>
-  
-
-      </header>
-      
-      <div class="article-info article-info-post">
-        
-        
-
-        <div class="clearfix"></div>
-      </div>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>前端路上的一名前端菜菜，为了对自己每一次学习有一个深刻的记忆和总结，早日脱离菜菜队伍，就从下面开始吧。</p>
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"><meta name="format-detection" content="telephone=no"><meta name="format-detection" content="email=no"><meta name="description"><meta name="keywords" content="Hexo, Gruntjs, Nodejs, Reactjs, Vuejs"><title>单例模式 - 前端-小婷婷个人主页</title><link rel="stylesheet" href="/css/main_style.min.css"><link rel="icon" href="/favicon.ico"></head><body><input id="navi" type="checkbox"><ul class="main-navication"><li><a href="/"><span>Home</span></a></li><li><a href="https://github.com"><span>Github</span></a></li><li><a href="https://www.v2ex.com/"><span>V2EX</span></a></li></ul><div class="wrapper" id="wrap"><div class="post-header"><label class="navi-button light" for="navi">MENU</label><img class="background" src="http://callfiles.ueibo.com/hexo-theme-laughing/post_background.jpg"><div class="post-title"><h1 class="title">单例模式</h1><ul class="meta"><li><i class="icon icon-author"></i>前端-小婷婷</li><li><i class="icon icon-clock"></i>8 Minutes</li><li><i class="icon icon-calendar"></i>April 9, 2017</li></ul></div></div><div class="article-content" style="max-width:800px"><p>前端路上的一名前端菜菜，为了对自己每一次学习有一个深刻的记忆和总结，早日脱离菜菜队伍，就从下面开始吧。</p>
 <p>单例模式的定义：保证一个类仅有一个实例，并提供一个访问它的全局点；那下面跟着我一步一步学习，希望能对你有所帮助，同时也是对自己学习的一个复习总结的过程。</p>
 <h1 id="实现单例模式"><a href="#实现单例模式" class="headerlink" title="实现单例模式"></a>实现单例模式</h1><p>要实现一个单例模式并不是很复杂，无非是用一个变量来标注是否为某类创建对象，如果是，则在下一次获取类的实例时，返回该类已经创建的对象，代码如下：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">var</span> Singleton = <span class="function"><span class="keyword">function</span>(<span class="params">name</span>)</span>&#123;</div><div class="line"></div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line"></div><div class="line">		<span class="keyword">this</span>.instance = <span class="literal">null</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line">Singleton.prototy.getName = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">this</span>.name;</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">Singleton.getInStance = <span class="function"><span class="keyword">function</span>(<span class="params">name</span>)</span>&#123;</div><div class="line"></div><div class="line">		<span class="keyword">if</span>(!<span class="keyword">this</span>.instance)&#123;</div><div class="line"></div><div class="line">			<span class="keyword">this</span>.instance = <span class="keyword">new</span> Singleton(name);</div><div class="line"></div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="keyword">return</span> <span class="keyword">this</span>.instance;</div><div class="line">&#125;</div><div class="line">		</div><div class="line">或者</div><div class="line"></div><div class="line"><span class="keyword">var</span> Singleton = <span class="function"><span class="keyword">function</span>(<span class="params">name</span>)</span>&#123;</div><div class="line"></div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line"></div><div class="line">		<span class="keyword">this</span>.instance = <span class="literal">null</span>;</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">Singleton.prototy.getName = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line"></div><div class="line">		<span class="keyword">return</span> <span class="keyword">this</span>.name;</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">Singleton.getInStance = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line"></div><div class="line">		<span class="keyword">if</span>(!<span class="keyword">this</span>.instance)&#123;</div><div class="line"></div><div class="line">			<span class="keyword">this</span>.instance = <span class="keyword">new</span> Singleton(name);</div><div class="line"></div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="keyword">return</span> <span class="keyword">this</span>.instance;</div><div class="line">&#125;)();</div></pre></td></tr></table></figure>
+<pre><code class="javascript">
+            var Singleton = function(name){
+
+                    this.name = name;
+
+                    this.instance = null;
+            }
+
+            Singleton.prototy.getName = function(){
+                    return this.name;
+
+            }
+
+            Singleton.getInStance = function(name){
+
+                    if(!this.instance){
+
+                        this.instance = new Singleton(name);
+
+                    }
+
+                    return this.instance;
+            }
+
+            或者
+
+            var Singleton = function(name){
+
+                    this.name = name;
+
+                    this.instance = null;
+
+            }
+
+            Singleton.prototy.getName = function(){
+
+                    return this.name;
+
+            }
+
+            Singleton.getInStance = (function(){
+
+                    if(!this.instance){
+
+                        this.instance = new Singleton(name);
+
+                    }
+
+                    return this.instance;
+            })();
+</code></pre>
 <p>var a = singleton.getInStance(‘seve1’);</p>
 <p>var b = singleton.getInStance(‘seve2’);</p>
 <p>alert(a === b) //true</p>
 <p>调用Singleton.getInStance来创建类的唯一对象，此时可能会想到我们平时都是用new xxx来创建类的对象，这种写法好像不太实用，接下我们需要写个更透明的。</p>
 <h1 id="透明单例模式"><a href="#透明单例模式" class="headerlink" title="透明单例模式"></a>透明单例模式</h1><p>下面创建一个“透明”类，在用普通new xxx创建类的对象，我们将使用CreatDiv单例类，它的作用就是在页面上创建唯一div节点，代码如下：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">var</span> CreatDiv = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">var</span> instance;</div><div class="line"></div><div class="line">	<span class="keyword">var</span> CreatDiv = <span class="function"><span class="keyword">function</span>(<span class="params">html</span>)</span>&#123;</div><div class="line"></div><div class="line">		<span class="keyword">if</span>(instance)&#123;</div><div class="line"></div><div class="line">			<span class="keyword">return</span> instance;</div><div class="line"></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">this</span>.html = html;</div><div class="line"></div><div class="line">		<span class="keyword">this</span>.init();</div><div class="line"></div><div class="line">		<span class="keyword">return</span> instance = <span class="keyword">this</span>;</div><div class="line"></div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	CreatDiv.protopy.init = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line"></div><div class="line">		<span class="keyword">var</span> div = <span class="built_in">document</span>.createElement(<span class="string">'div'</span>);</div><div class="line"></div><div class="line">		div.innerHtml = <span class="keyword">this</span>.html;</div><div class="line"></div><div class="line">		<span class="built_in">document</span>.body.appendChild(div);</div><div class="line"></div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="keyword">return</span> CreatDiv;</div><div class="line">&#125;)();</div></pre></td></tr></table></figure>
+<pre><code class="javascript">
+    var CreatDiv = (function(){
+
+        var instance;
+
+        var CreatDiv = function(html){
+
+            if(instance){
+
+                return instance;
+
+            }
+            this.html = html;
+
+            this.init();
+
+            return instance = this;
+
+        }
+
+        CreatDiv.protopy.init = function(){
+
+            var div = document.createElement(&#39;div&#39;);
+
+            div.innerHtml = this.html;
+
+            document.body.appendChild(div);
+
+        }
+
+        return CreatDiv;
+    })();
+</code></pre>
 <p>var a = new CreatDiv(‘seve1’);</p>
 <p>var b = new CreatDiv(‘seve2’);</p>
 <p>alert( a === b)    //true</p>
@@ -254,9 +98,43 @@
 <p>CreatDiv构造函数，实际上负责了两件事情，第一件事情就是只保证创建一个对象，第二件事情是创建对象和执行初始化init方法。</p>
 <p>假设我们要利用这个类，创建很多div的话，就需要从单例模式变为普通模式，需要去掉保证创建一个对象的判断，这样就不太好，需要改进；</p>
 <h2 id="用代理实现单例模式"><a href="#用代理实现单例模式" class="headerlink" title="用代理实现单例模式"></a>用代理实现单例模式</h2><p>现在我们利用代理类的方式，来解决上面提到的问题<br>首先在CreateDiv构造函数中，把负责单例代码移除出去，使他作为一个普通的创建div的类，代码如下：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">var</span> CreateDiv = <span class="function"><span class="keyword">function</span>(<span class="params">html</span>)</span>&#123;</div><div class="line">	</div><div class="line">	<span class="keyword">this</span>.html = html;</div><div class="line">	</div><div class="line">	<span class="keyword">this</span>.init();</div><div class="line">	</div><div class="line">&#125;</div><div class="line"></div><div class="line">CreateDiv.prototype.init = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">var</span> div = <span class="built_in">document</span>.createElement(<span class="string">'div'</span>);</div><div class="line">	</div><div class="line">	div.innerHTML = <span class="keyword">this</span>.html;</div><div class="line">	</div><div class="line">	<span class="built_in">document</span>.body.appendChild(div);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<pre><code class="javascript">
+    var CreateDiv = function(html){
+
+        this.html = html;
+
+        this.init();
+
+    }
+
+    CreateDiv.prototype.init = function(){
+
+        var div = document.createElement(&#39;div&#39;);
+
+        div.innerHTML = this.html;
+
+        document.body.appendChild(div);
+    }
+</code></pre>
 <p>接下来引入代理类singletonCreateDiv</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">var</span> singletonCreateDiv = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">	</div><div class="line">	<span class="keyword">var</span> instance;</div><div class="line">	</div><div class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">html</span>)</span>&#123;</div><div class="line">		</div><div class="line">		<span class="keyword">if</span>(!instance)&#123;</div><div class="line">			</div><div class="line">			instance = <span class="keyword">new</span> CreateDiv(html);</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		<span class="keyword">return</span> instance;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">&#125;)();</div></pre></td></tr></table></figure>
+<pre><code class="javascript">
+    var singletonCreateDiv = (function(){
+
+        var instance;
+
+        return function(html){
+
+            if(!instance){
+
+                instance = new CreateDiv(html);
+            }
+
+            return instance;
+        }
+
+
+    })();
+</code></pre>
 <p>var a = new singletonCreateDiv(‘seve1’);</p>
 <p>var b = new singletonCreateDiv(‘seve2’);</p>
 <p>alert( a === b )   //true</p>
@@ -264,133 +142,152 @@
 <p>##惰性单例<br>前面我们了解了单例模式的一些实现方法，现在我们来学习一下惰性单例；<br>那什么叫惰性单例？我的理解就是在需要的时候才创建对象实例而且只创建一次实例，并提供一个全局的访问；下面我们通过一个登录弹出框为例，实现惰性单例；</p>
 <p>一般这种登录登录弹出框，只有在点击登录按钮才会弹出，很明显这个登录弹出框在这个页面是唯一的，而且页面中不可能同时出现两个登录框；</p>
 <p>第一种解决方案是在页面加载的时候就去创建好这个div登录弹出框，在点击登录按钮的时候去show，关闭的时候hide。代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&lt;html&gt;</div><div class="line"></div><div class="line">	&lt;body&gt;</div><div class="line">	</div><div class="line">		&lt;button id=&quot;loginBtn&quot;&gt;&lt;/div&gt;</div><div class="line">		&lt;button id=&quot;closeBtn&quot;&gt;&lt;/div&gt;</div><div class="line">		</div><div class="line">	&lt;/body&gt;</div><div class="line">	</div><div class="line">	&lt;script&gt;</div><div class="line">		</div><div class="line">		var loginLayer = (function()&#123;</div><div class="line">			</div><div class="line">			var div = document.createElement(&apos;div&apos;);</div><div class="line">			</div><div class="line">			div.innerHTML = &apos;我是登录框&apos;;</div><div class="line">			</div><div class="line">			div.style.display = &apos;none&apos;;</div><div class="line">			</div><div class="line">			document.body.appendChild(div);</div><div class="line">			</div><div class="line">			return div;</div><div class="line">			</div><div class="line">		&#125;)();</div><div class="line">		</div><div class="line">		document.getElementById(&apos;loginBtn&apos;).onclick = function()&#123;</div><div class="line">		</div><div class="line">				loginLayer.style.display = &quot;block&quot;;</div><div class="line">				</div><div class="line">			</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		document.getElementById(&apos;closeBtn&apos;).onclick = function()&#123;</div><div class="line">			</div><div class="line">			loginLayer.style.display = &quot;none&quot;;</div><div class="line">		&#125;</div><div class="line">	&lt;/script&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure>
+<pre><code class="javasrcript">
+    &lt;html&gt;
+
+        &lt;body&gt;
+
+            &lt;button id=&quot;loginBtn&quot;&gt;&lt;/div&gt;
+            &lt;button id=&quot;closeBtn&quot;&gt;&lt;/div&gt;
+
+        &lt;/body&gt;
+
+        &lt;script&gt;
+
+            var loginLayer = (function(){
+
+                var div = document.createElement(&#39;div&#39;);
+
+                div.innerHTML = &#39;我是登录框&#39;;
+
+                div.style.display = &#39;none&#39;;
+
+                document.body.appendChild(div);
+
+                return div;
+
+            })();
+
+            document.getElementById(&#39;loginBtn&#39;).onclick = function(){
+
+                    loginLayer.style.display = &quot;block&quot;;
+
+
+            }
+
+            document.getElementById(&#39;closeBtn&#39;).onclick = function(){
+
+                loginLayer.style.display = &quot;none&quot;;
+            }
+        &lt;/script&gt;
+    &lt;/html&gt;
+</code></pre>
 <p>这样写可能存在一个问题就是我们放问项目只想看看，并不想进行登录操作，但是登录弹出框在页面加载的时候就已经创建好了，那么很有可能将白白浪费一些dom节点；</p>
 <p>那我们改写一下代码，让用户在点击的时候才创建div登录弹出框。代码如下：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">	&lt;html&gt;</div><div class="line"></div><div class="line">	&lt;body&gt;</div><div class="line">	</div><div class="line">		&lt;button id="loginBtn"&gt;&lt;/div&gt;</div><div class="line">		&lt;button id="closeBtn"&gt;&lt;/div&gt;</div><div class="line">		</div><div class="line">	&lt;/body&gt;</div><div class="line">	</div><div class="line">	&lt;script&gt;</div><div class="line">		</div><div class="line">		var createLoginLayer = function()&#123;</div><div class="line">			</div><div class="line">			var div = document.createElement('div');</div><div class="line">			</div><div class="line">			div.innerHTML = '我是登录框';</div><div class="line">			</div><div class="line">			div.style.display = 'none';</div><div class="line">			</div><div class="line">			document.body.appendChild(div);</div><div class="line">			</div><div class="line">			return div;</div><div class="line">			</div><div class="line">		&#125;;</div><div class="line">		</div><div class="line">		document.getElementById('loginBtn').onclick = function()&#123;</div><div class="line">		</div><div class="line">				var loginLayer = createLoginLayer();</div><div class="line">				</div><div class="line">				loginLayer.style.display = "block";</div><div class="line">				</div><div class="line">			</div><div class="line">		&#125;</div><div class="line">	&lt;/script&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure>
+<pre><code class="javascript">
+        &lt;html&gt;
+
+        &lt;body&gt;
+
+            &lt;button id=&quot;loginBtn&quot;&gt;&lt;/div&gt;
+            &lt;button id=&quot;closeBtn&quot;&gt;&lt;/div&gt;
+
+        &lt;/body&gt;
+
+        &lt;script&gt;
+
+            var createLoginLayer = function(){
+
+                var div = document.createElement(&#39;div&#39;);
+
+                div.innerHTML = &#39;我是登录框&#39;;
+
+                div.style.display = &#39;none&#39;;
+
+                document.body.appendChild(div);
+
+                return div;
+
+            };
+
+            document.getElementById(&#39;loginBtn&#39;).onclick = function(){
+
+                    var loginLayer = createLoginLayer();
+
+                    loginLayer.style.display = &quot;block&quot;;
+
+
+            }
+        &lt;/script&gt;
+    &lt;/html&gt;
+</code></pre>
 <p>虽然达到了惰性的目的，但失去了单例的效果，当每次点击登录按钮的时候，都会创建一个新的登录弹出框div，虽然我们可以在点击关闭的时候把这个弹出框删除掉，这样频繁的创建和删除节点是不合理的；</p>
 <p>为了达到单例的效果，这里可以利用一个变量来判断是否已经创建过登录弹出框，代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">var createLoginLayer = (function()&#123;</div><div class="line">	</div><div class="line">	var div;</div><div class="line">	</div><div class="line">	return function()&#123;</div><div class="line">	</div><div class="line">		if(!div)&#123;</div><div class="line">			</div><div class="line">			div = document.createElement(&apos;div&apos;);</div><div class="line">	</div><div class="line">			div.innerHTML = &apos;我是登录框&apos;;</div><div class="line">			</div><div class="line">			div.style.display = &apos;none&apos;;</div><div class="line">			</div><div class="line">			document.body.appendChild(div);</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		return div;</div><div class="line">		</div><div class="line">	&#125;;</div><div class="line"></div><div class="line">&#125;)();</div></pre></td></tr></table></figure>
-<p>上面的代码把创建对象和管理单例的逻辑放在createLoginLayer内部，假设我页面上想动态添加唯一iframe 或script标签，我们又要重写一个。</p>
+<pre><code>
+    var createLoginLayer = (function(){
+
+        var div;
+
+        return function(){
+
+            if(!div){
+
+                div = document.createElement(&#39;div&#39;);
+
+                div.innerHTML = &#39;我是登录框&#39;;
+
+                div.style.display = &#39;none&#39;;
+
+                document.body.appendChild(div);
+            }
+
+            return div;
+
+        };
+
+    })();
+</code></pre><p>上面的代码把创建对象和管理单例的逻辑放在createLoginLayer内部，假设我页面上想动态添加唯一iframe 或script标签，我们又要重写一个。</p>
 <p>为了创建一个通用的惰性单例，首先需要把创建对象和管理单例的逻辑各自独立，代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">var getSingle = function(fn)&#123;</div><div class="line"></div><div class="line">	var result;</div><div class="line">	</div><div class="line">	return result || (result = fn.apply(this,arguments));</div><div class="line">&#125;</div><div class="line"></div><div class="line">var createLoginLayer = function()&#123;</div><div class="line">	</div><div class="line">	var div = document.createElement(&apos;div&apos;);</div><div class="line">	</div><div class="line">	div.innerHTML = &apos;我是登录框&apos;;</div><div class="line">	</div><div class="line">	div.style.display = &apos;none&apos;;</div><div class="line">	</div><div class="line">	document.body.appendChild(div);</div><div class="line">	</div><div class="line">	return div;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">document.getElementById(&apos;loginBtn&apos;).onclick = function()&#123;</div><div class="line">	</div><div class="line">	var loginLayer= getSingle(createLoginLayer);</div><div class="line">	</div><div class="line">	loginLayer.style.display = &apos;block&apos;;</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>总结：传统的单例模式是通过类实现的，javascript中的单例可以通过方法来实现。通过学习让我知道单例模式在实际项目开发当中也非常实用，特别是惰性单例技术，在合适的时候才创建对象而且只创建唯一一次。</p>
+<pre><code>
+    var getSingle = function(fn){
 
-      
-    </div>
-    
-  </div>
-  
-    
-  
-</article>
+        var result;
 
-
-<div class="share_jia">
-	<!-- JiaThis Button BEGIN -->
-	<div class="jiathis_style">
-		<span class="jiathis_txt">分享到: &nbsp; </span>
-		<a class="jiathis_button_facebook"></a> 
-    <a class="jiathis_button_twitter"></a>
-    <a class="jiathis_button_plus"></a> 
-    <a class="jiathis_button_tsina"></a>
-		<a class="jiathis_button_cqq"></a>
-		<a class="jiathis_button_douban"></a>
-		<a class="jiathis_button_weixin"></a>
-		<a class="jiathis_button_tumblr"></a>
-    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
-	</div>
-	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
-	<!-- JiaThis Button END -->
-</div>
-
-
-
-
-
-
-<div class="duoshuo">
-	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="singleCase" data-title="单例模式" data-url="http://yutingting945718425.github.io/2017/04/09/singleCase/"></div>
-	<!-- 多说评论框 end -->
-	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-	<script type="text/javascript">
-	var duoshuoQuery = {short_name:"true"};
-	(function() {
-		var ds = document.createElement('script');
-		ds.type = 'text/javascript';ds.async = true;
-		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-		ds.charset = 'UTF-8';
-		(document.getElementsByTagName('head')[0] 
-		 || document.getElementsByTagName('body')[0]).appendChild(ds);
-	})();
-	</script>
-	<!-- 多说公共JS代码 end -->
-</div>
-
-
-
-
-</div>
-      <footer id="footer">
-  <div class="outer">
-    <div id="footer-info">
-    	<div class="footer-left">
-    		&copy; 2017 前端-小婷婷
-    	</div>
-      	<div class="footer-right">
-      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
-      	</div>
-    </div>
-  </div>
-</footer>
-    </div>
-    
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-
-
-<script>
-	var yiliaConfig = {
-		fancybox: true,
-		mathjax: true,
-		animate: true,
-		isHome: false,
-		isPost: true,
-		isArchive: false,
-		isTag: false,
-		isCategory: false,
-		open_in_new: false
-	}
-</script>
-<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
-<script src="/js/main.js"></script>
-
-
-
-
-
-
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-    tex2jax: {
-        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
-        processEscapes: true,
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        return result || (result = fn.apply(this,arguments));
     }
-});
 
-MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-        all[i].SourceElement().parentNode.className += ' has-jax';                 
-    }       
-});
-</script>
+    var createLoginLayer = function(){
 
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
+        var div = document.createElement(&#39;div&#39;);
+
+        div.innerHTML = &#39;我是登录框&#39;;
+
+        div.style.display = &#39;none&#39;;
+
+        document.body.appendChild(div);
+
+        return div;
+    }
 
 
-  </div>
-</body>
-</html>
+    document.getElementById(&#39;loginBtn&#39;).onclick = function(){
+
+        var loginLayer= getSingle(createLoginLayer);
+
+        loginLayer.style.display = &#39;block&#39;;
+
+    }
+</code></pre><p>总结：传统的单例模式是通过类实现的，javascript中方法就可以来实现单例模式。通过学习让我知道单例模式在实际项目开发当中也非常实用，特别是惰性单例技术，在合适的时候才创建对象而且只创建唯一一次。</p>
+</div><div class="article-meta" style="max-width:800px"></div><div class="article-comment" style="max-width:800px"><div class="ds-thread" id="ds-thread" data-thread-key="cj1c1sfq50000fka79hn5f0mw" data-title="单例模式" data-url="http://yutingting945718425.github.io/2017/04/09/singleCase/" site-name="ueibo"></div><script>var siteName = document.getElementById('ds-thread').getAttribute('site-name');
+var duoshuoQuery = {short_name: siteName};
+(function() {
+  var ds = document.createElement('script');
+  ds.type = 'text/javascript';ds.async = true;
+  ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  ds.charset = 'UTF-8';
+  (document.getElementsByTagName('head')[0] 
+  || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();</script></div><ul class="navication"><li class="home"><a href="/"><i class="icon icon-home"></i></a></li></ul><div class="page-footer"><div class="top"><ul class="social"><li><a href="https://github.com/BoizZ" title="Github" target="_blank"><i class="icon icon-github"></i></a></li><li><a href="https://weibo.com/heqibang" title="Weibo" target="_blank"><i class="icon icon-weibo"></i></a></li><li><a href="https://www.segmentfault.com/u/bon" title="SegmentFault" target="_blank"><i class="icon icon-segmentfault"></i></a></li></ul></div><div class="bottom"><p class="copyright">© 2017 前端-小婷婷个人主页<br><small>POWER BY <a href="https://hexo.io" target="_blank">HEXO</a></small><small>, THEME BY <a href="https://github.com/BoizZ/hexo-theme-laughing" target="_blank">LAUGHING</a></small></p></div></div></div><script>var wrap = document.getElementById('wrap');
+window.onload = function () {
+  wrap.className += ' done';
+}</script></body></html>
