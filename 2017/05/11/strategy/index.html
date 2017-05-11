@@ -1,0 +1,259 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"><meta name="format-detection" content="telephone=no"><meta name="format-detection" content="email=no"><meta name="description"><meta name="keywords" content="Hexo, Gruntjs, Nodejs, Reactjs, Vuejs"><title>策略模式 - 前端-小婷婷个人主页</title><link rel="stylesheet" href="/css/main_style.min.css"><link rel="icon" href="/favicon.ico"></head><body><input id="navi" type="checkbox"><ul class="main-navication"><li><a href="/"><span>Home</span></a></li><li><a href="https://github.com"><span>Github</span></a></li><li><a href="https://www.v2ex.com/"><span>V2EX</span></a></li></ul><div class="wrapper" id="wrap"><div class="post-header"><label class="navi-button light" for="navi">MENU</label><img class="background" src="http://callfiles.ueibo.com/hexo-theme-laughing/post_background.jpg"><div class="post-title"><h1 class="title">策略模式</h1><ul class="meta"><li><i class="icon icon-author"></i>前端-小婷婷</li><li><i class="icon icon-clock"></i>7 Minutes</li><li><i class="icon icon-calendar"></i>May 11, 2017</li></ul></div></div><div class="article-content" style="max-width:800px"><h1 id="实现策略模式"><a href="#实现策略模式" class="headerlink" title="实现策略模式"></a>实现策略模式</h1><p>什么策略模式？书上是说定义一系列的算法，把它们一个个封装起来，并且使它们可以相互替换；<br>最近因项目需求要完成一个授权子帐号的页面，里面有邮箱地址、密码等各种校验，没用到该模式我可能要写成这样代码如下：</p>
+<pre><code class="javascript">$(&quot;.J_childAccount-sure&quot;).on(&quot;click&quot;,function(){
+
+            var username = $(&quot;input[name=username]&quot;).value(),
+                password = $(&quot;input[name=password]&quot;).value(),
+                email = $(&quot;input[name=email]&quot;).value();
+
+            if(username == &quot;&quot;){
+
+                alert(&quot;用户名不能为空！&quot;);
+                return false;
+
+            }
+
+            if(password.length &lt; 6){
+
+                alert(&quot;密码长度不能小于6位&quot;);
+                return false;
+
+            }
+
+            if(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/.test(email)){
+
+            alert(&quot;邮箱格式不正确&quot;);
+            return false;
+
+            }
+})
+</code></pre>
+<p>大家曾经应该也写过这种代码，有如下几种缺点：</p>
+<p>1.点击事件函数比较庞大，包含了很多if else语句</p>
+<p>2.如果要增加一个新的校验规则或者把密码长度从6改为8，我们都需要深入到点击事件函数里面去改代码，这样就违背了开放－封闭的原则</p>
+<p>3.算法的复用性差，如果程序的另一个地方也用到了同样的校验，这时我们只能把该里面的代码复制一份</p>
+<h2 id="实现策略模式-1"><a href="#实现策略模式-1" class="headerlink" title="实现策略模式"></a>实现策略模式</h2><p>第一步需要把这些校验封装成对象</p>
+<pre><code class="javascript">var strategies = {
+
+            isNonEmpty:function(value,errorMsg){
+
+                if(value === &quot;&quot;){
+
+                    return errorMsg;
+                }
+            },
+            minLength:function(value,length,errorMsg){
+
+                if(value.length &lt; length){
+
+                    return errorMsg;
+                }
+            },
+            isEmail:function(value,errorMsg){
+                var reg =  /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
+                if(!reg.test(value)){
+
+                    return errorMsg;
+
+                }
+
+
+            }
+}
+</code></pre>
+<p>接着创建一个validator类负责接收用户的请求并委托给strategies对象代码如下：</p>
+<pre><code class="javascript">
+var Validator = function(){
+
+    this.cache = [];
+
+}
+
+Validator.prototype.add = function(dom,rule,errorMsg){
+
+    var ary = rule.split(&quot;:&quot;);
+    this.cache.push(
+        function(){
+
+            var strategy = ary.shift();
+            ary.unshift(dom.value);
+            ary.push(errorMsg);
+            return strategies[strategy].apply(ary);
+        });
+}
+
+Validator.prototype.start = function(){
+    for(var i = 0,validatorFun;validatorFun= this.cache[i++];){
+
+        var msg = validatorFun();
+        return msg;
+    }
+}
+</code></pre>
+<p>最后用户调用Validator类发送请求</p>
+<pre><code class="javacript">var validatorFun = function(){
+
+    var validator = new Validator();
+
+    validator.add($(&quot;input[name=username]&quot;),&quot;isNonEmpty&quot;,&quot;用户不能为空&quot;);
+
+    validator.add($(&quot;input[name=password]),&quot;minLength&quot;,&quot;密码长度不能少于6位&quot;);
+
+    validator.add($(&quot;input[name=email]&quot;),&quot;isEmail&quot;,&quot;邮件格式不正确&quot;);
+    var errorMsg = validator.start();
+    return errorMsg;    
+}
+
+$(&quot;.J_childAccount-sure&quot;).on(&quot;click&quot;,function(){
+
+    var errorMsg = validatorFun();
+    if(errorMsg){
+        alert(errorMsg);
+        return false;//阻止提交
+    }
+});
+</code></pre>
+<p>使用策略模式重构代码之后，这些校验规则可以复用到程序的任何地方，还能作为插件的方式，方便地移入其他项目中。</p>
+<p>代码写到这里，我们可以发现其实还有一点点遗憾之处，就是一个输入框只能对应一种校验规则，比如，用户名输入框只能校验输入是否为空，所以代码需要我们改进更通用一点<br>下面的代码提供一个输入框对应多种校验规则，代码如下：</p>
+<pre><code class="javascript">
+ &lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;webpack 2 demo&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;div&gt;请输入用户名: &lt;input type=&quot;text&quot; name=&quot;username&quot;/&gt;&lt;/div&gt;
+        &lt;div&gt;请输入密码: &lt;input type=&quot;password&quot; name=&quot;password&quot;/&gt;&lt;/div&gt;
+        &lt;div&gt;请输入邮箱地址: &lt;input type=&quot;text&quot; name=&quot;email&quot;/&gt;&lt;/div&gt;
+        &lt;button class=&quot;submit&quot;&gt;提交&lt;/button&gt;
+        &lt;script src=&quot;dist/bundle.js&quot;&gt;&lt;/script&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>再次需要把这些校验封装成对象，Validator.js负责接收用户的请求并委托给strategies对象代码</p>
+<pre><code class="javascript">var strategies = {
+
+    isNonEmpty:function(value,errorMsg){
+
+        if(value == &quot;&quot;){
+
+            return errorMsg;
+
+        }
+
+    },
+    minLength:function(value,length,errorMsg){
+
+        if(value.length &lt; length){
+
+            return errorMsg;
+
+        }
+    },
+    isEmail:function(value,errorMsg){
+
+        var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
+
+        if(!reg.test(value)){
+
+            return errorMsg;
+
+        }
+    }
+}
+
+var Validator = function(){
+
+    this.cache =[];
+
+}
+
+Validator.prototype.add = function(dom,rules){
+
+    var self = this;
+
+    for(var i = 0,rule;rule = rules[i++];){
+
+        (function(rule){
+
+            var strategyAry = rule.strategy.split(&quot;:&quot;);
+
+            var errorMsg = rule.errorMsg;
+
+            self.cache.push(function(){
+
+                var strategy = strategyAry.shift();
+                strategyAry.unshift(dom.val());
+                strategyAry.push(errorMsg);
+                return strategies[strategy].apply(dom,strategyAry);
+
+            });
+
+        })(rule)
+    }
+}
+
+Validator.prototype.start =function(){
+
+    for(var i = 0,validatorFun;validatorFun = this.cache[i++];){
+
+        var errorMsg = validatorFun();
+
+        if(errorMsg){
+
+            return errorMsg;
+
+        }
+    }
+}
+</code></pre>
+<p>最后用户调用Validator类发送请求</p>
+<pre><code class="javascript">var validatorFun = function(){
+
+    var validator = new Validator();
+
+    validator.add($(&quot;input[name=username]&quot;),[{
+
+        strategy:&quot;isNonEmpty&quot;,
+        errorMsg:&quot;用户名不能为空&quot;
+
+    },{
+        strategy:&quot;minLength:6&quot;,
+        errorMsg:&quot;用户名长度不能小于6位&quot;
+    }]);
+
+    validator.add($(&quot;input[name=password]&quot;),[{
+        strategy:&quot;minLength:6&quot;,
+        errorMsg:&quot;密码长度不能小于6位&quot;
+    }]);
+
+    validator.add($(&quot;input[name=email]&quot;),[{
+        strategy:&quot;isEmail&quot;,
+        errorMsg:&quot;邮箱格式不正确&quot;
+    }]);
+
+    var errorMsg = validator.start();
+    return errorMsg;
+}
+
+$(&quot;.submit&quot;).on(&quot;click&quot;,function(){
+
+    var errorMsg = validatorFun();
+    if(errorMsg){
+        alert(errorMsg);
+        return false;
+    }
+
+});
+</code></pre>
+</div><div class="article-meta" style="max-width:800px"></div><div class="article-comment" style="max-width:800px"><div class="ds-thread" id="ds-thread" data-thread-key="cj2keqa990002u4a7ork1ryxg" data-title="策略模式" data-url="http://yutingting945718425.github.io/2017/05/11/strategy/" site-name="ueibo"></div><script>var siteName = document.getElementById('ds-thread').getAttribute('site-name');
+var duoshuoQuery = {short_name: siteName};
+(function() {
+  var ds = document.createElement('script');
+  ds.type = 'text/javascript';ds.async = true;
+  ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  ds.charset = 'UTF-8';
+  (document.getElementsByTagName('head')[0] 
+  || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();</script></div><ul class="navication"><li class="home"><a href="/"><i class="icon icon-home"></i></a></li><li><a href="/2017/04/16/flex/"><i class="icon icon-arror-right"></i></a></li></ul><div class="page-footer"><div class="top"><ul class="social"><li><a href="https://github.com/BoizZ" title="Github" target="_blank"><i class="icon icon-github"></i></a></li><li><a href="https://weibo.com/heqibang" title="Weibo" target="_blank"><i class="icon icon-weibo"></i></a></li><li><a href="https://www.segmentfault.com/u/bon" title="SegmentFault" target="_blank"><i class="icon icon-segmentfault"></i></a></li></ul></div><div class="bottom"><p class="copyright">© 2017 前端-小婷婷个人主页<br><small>POWER BY <a href="https://hexo.io" target="_blank">HEXO</a></small><small>, THEME BY <a href="https://github.com/BoizZ/hexo-theme-laughing" target="_blank">LAUGHING</a></small></p></div></div></div><script>var wrap = document.getElementById('wrap');
+window.onload = function () {
+  wrap.className += ' done';
+}</script></body></html>
