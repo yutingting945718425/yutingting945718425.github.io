@@ -1,0 +1,249 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"><meta name="format-detection" content="telephone=no"><meta name="format-detection" content="email=no"><meta name="description"><meta name="keywords" content="Hexo, Gruntjs, Nodejs, Reactjs, Vuejs"><title>flex布局写法 - 前端-小婷婷个人主页</title><link rel="stylesheet" href="/css/main_style.min.css"><link rel="icon" href="/favicon.ico"></head><body><input id="navi" type="checkbox"><ul class="main-navication"><li><a href="/"><span>Home</span></a></li><li><a href="https://github.com"><span>Github</span></a></li><li><a href="https://www.v2ex.com/"><span>V2EX</span></a></li></ul><div class="wrapper" id="wrap"><div class="post-header"><label class="navi-button light" for="navi">MENU</label><img class="background" src="http://callfiles.ueibo.com/hexo-theme-laughing/post_background.jpg"><div class="post-title"><h1 class="title">flex布局写法</h1><ul class="meta"><li><i class="icon icon-author"></i>前端-小婷婷</li><li><i class="icon icon-clock"></i>9 Minutes</li><li><i class="icon icon-calendar"></i>June 5, 2017</li></ul></div></div><div class="article-content" style="max-width:800px"><h2 id="接着介绍常见布局的flex写法"><a href="#接着介绍常见布局的flex写法" class="headerlink" title="接着介绍常见布局的flex写法"></a>接着介绍常见布局的flex写法</h2><p><a href="http://www.ruanyifeng.com/blog/2015/07/flex-examples.html" target="_blank" rel="external">参考的主要资料:http://www.ruanyifeng.com/blog/2015/07/flex-examples.html</a></p>
+<pre><code>&lt;div class=&quot;box&quot;&gt;
+    &lt;span class=&quot;item&quot;&gt;&lt;/span&gt;
+&lt;/div&gt;
+
+ .box{
+    width: 100px;
+    height: 100px;
+    background-color: #ccc;
+    border-radius: 10px;
+    box-shadow: inset 0 0 10px #999;
+    padding:10px;
+
+}
+.box .item{
+    width: 20px;
+    height: 20px;
+    background-color: #000;
+    border-radius: 10px;
+}
+</code></pre><h2 id="1-下面，就来看看Flex如何实现，从1点到9点骰子的布局"><a href="#1-下面，就来看看Flex如何实现，从1点到9点骰子的布局" class="headerlink" title="1.下面，就来看看Flex如何实现，从1点到9点骰子的布局"></a>1.下面，就来看看Flex如何实现，从1点到9点骰子的布局</h2><p><a href="https://davidwalsh.name/flexbox-dice" target="_blank" rel="external">参考的主要资料https://davidwalsh.name/flexbox-dice</a></p>
+<h3 id="1-1一个点的骰子布局。"><a href="#1-1一个点的骰子布局。" class="headerlink" title="1.1一个点的骰子布局。"></a>1.1一个点的骰子布局。</h3><p><img src="/img/02.png" alt=""></p>
+<p>1.flex布局flex－direction默认主轴方向是水平方向，起点在左端<br>2.flex布局justify-content默认项目在主轴的对齐方式左对齐<br>3.结合使用justify-content改变项目主轴的对齐方式；结合使用align－item改变项目交叉轴上的对齐方式</p>
+<pre><code> .box{
+
+    display: flex;
+    justify-content:center;
+    align-items: center;
+
+}
+</code></pre><h3 id="1-2两个点的情况"><a href="#1-2两个点的情况" class="headerlink" title="1.2两个点的情况"></a>1.2两个点的情况</h3><p><img src="/img/04.png" alt=""><br>实现思路<br><img src="/img/step01.jpg" alt=""></p>
+<pre><code>&lt;div class=&quot;box&quot;&gt;
+    &lt;span class=&quot;item&quot;&gt;&lt;/span&gt;
+    &lt;span class=&quot;item&quot;&gt;&lt;/span&gt;
+&lt;/div&gt;
+</code></pre><pre><code>.box{
+
+    display: flex;
+    justify-content:space-between; 
+}
+.box .item:nth-child(2){
+    align-self: flex-end;
+}
+</code></pre><h3 id="1-3三个点的情况"><a href="#1-3三个点的情况" class="headerlink" title="1.3三个点的情况"></a>1.3三个点的情况</h3><p><img src="/img/05.png" alt=""><br>实现思路<br><img src="/img/step02.png" alt=""><br>在二点的基础上添加一个点设置该点align－self为flex－end</p>
+<pre><code>.box{
+
+    display: flex;
+    justify-content:space-between; 
+}
+.box .item:nth-child(2){
+    align-self: center;
+}
+.box .item:nth-child(3){
+    align-self: flex-end;
+}
+</code></pre><h3 id="1-4四个点的情况"><a href="#1-4四个点的情况" class="headerlink" title="1.4四个点的情况"></a>1.4四个点的情况</h3><p><img src="/img/06.png" alt=""><br>实现思路<br><img src="/img/step03.png" alt=""></p>
+<pre><code>&lt;div class=&quot;box box1&quot;&gt;
+    &lt;div class=&quot;cloumn&quot;&gt;
+        &lt;span class=&quot;item&quot;&gt;&lt;/span&gt;
+        &lt;span class=&quot;item&quot;&gt;&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;cloumn&quot;&gt;
+        &lt;span class=&quot;item&quot;&gt;&lt;/span&gt;
+        &lt;span class=&quot;item&quot;&gt;&lt;/span&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code></pre><pre><code>.box{
+    flex-wrap: wrap;
+    align-content: space-between;
+
+}
+.cloumn{
+    flex-basis: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.item{
+    width: 20px;
+    height: 20px;
+    background-color: #000;
+    border-radius: 10px;
+}
+</code></pre><h3 id="1-5五个点的情况"><a href="#1-5五个点的情况" class="headerlink" title="1.5五个点的情况"></a>1.5五个点的情况</h3><p><img src="/img/07.png" alt=""><br>实现思路<br><img src="/img/step04.png" alt=""></p>
+<pre><code>&lt;div class=&quot;box box1&quot;&gt;
+    &lt;div class=&quot;cloumn&quot;&gt;
+        &lt;span class=&quot;item&quot;&gt;&lt;/span&gt;
+        &lt;span class=&quot;item&quot;&gt;&lt;/span&gt;
+    &lt;/div&gt;
+        &lt;div class=&quot;cloumn&quot;&gt;
+        &lt;span class=&quot;item&quot;&gt;&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;cloumn&quot;&gt;
+        &lt;span class=&quot;item&quot;&gt;&lt;/span&gt;
+        &lt;span class=&quot;item&quot;&gt;&lt;/span&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code></pre><pre><code>.box{
+    flex-wrap: wrap;
+    align-content: space-between;
+
+}
+.cloumn{
+    flex-basis: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.item{
+    width: 20px;
+    height: 20px;
+    background-color: #000;
+    border-radius: 10px;
+}
+.box .cloumn:nth-child(2){
+    justify-content: center;
+}
+</code></pre><h2 id="2-接着介绍一下flex布局在实际开发中的应用"><a href="#2-接着介绍一下flex布局在实际开发中的应用" class="headerlink" title="2.接着介绍一下flex布局在实际开发中的应用"></a>2.接着介绍一下flex布局在实际开发中的应用</h2><p><a href="http://www.ruanyifeng.com/blog/2015/07/flex-examples.html" target="_blank" rel="external">参考的主要资料:http://www.ruanyifeng.com/blog/2015/07/flex-examples.html</a></p>
+<h3 id="2-1更棒，更简洁的栅格系统"><a href="#2-1更棒，更简洁的栅格系统" class="headerlink" title="2.1更棒，更简洁的栅格系统"></a>2.1更棒，更简洁的栅格系统</h3><p>现今大部分栅格系统都使用了两种布局方式中的一种：浮动 (float) 或者 內联块 (inline-block)</p>
+<pre><code>
+ &lt;div class=&quot;source&quot;&gt;
+    &lt;div class=&quot;Grid mt_20&quot;&gt;
+        &lt;div class=&quot;Grid-cell&quot;&gt;
+            &lt;div class=&quot;grid-content bg-purple-dark&quot;&gt;&lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code></pre><pre><code>*{
+    box-sizing: border-box;
+}
+.source{
+    width: 809px;
+    padding: 24px;
+    border: 1px solid #eaeefb;
+    border-radius: 4px;
+    margin: 0 auto;
+}
+.bg-purple-dark{
+    background: #99a9bf;
+}
+.bg-purple{
+    background:#d3dce6;
+}
+.grid-content{
+    min-height: 36px;
+    border-radius: 5px;
+}
+.mt_20{
+    margin-bottom: 20px;
+}
+</code></pre><h4 id="2-1-1基础栅格系统"><a href="#2-1-1基础栅格系统" class="headerlink" title="2.1.1基础栅格系统"></a>2.1.1基础栅格系统</h4><p>没有制定特定的宽度，它们自然的平分每一行的空间并撑满每一行，并且高度默认为0。<br><img src="/img/step05.png" alt=""></p>
+<pre><code>.Grid{
+    display: flex;
+}
+.Grid-cell {
+  flex: 1;
+}
+</code></pre><h5 id="间隔布局"><a href="#间隔布局" class="headerlink" title="间隔布局"></a>间隔布局</h5><p><img src="/img/step06.png" alt=""></p>
+<pre><code>.Grid-gutters {
+  margin: -1em 0 1em -1em;
+}
+.Grid-gutters &gt; .Grid-cell {
+  padding: 1em 0 0 1em;
+}
+</code></pre><h4 id="2-1-2独立的尺寸"><a href="#2-1-2独立的尺寸" class="headerlink" title="2.1.2独立的尺寸"></a>2.1.2独立的尺寸</h4><p>当你的需求不是等宽栅格的时候，可以添加尺寸属性到特定的栅格中。没有尺寸属性的栅格将简单地继续平分剩下的可用空间<br><img src="/img/step07.png" alt=""></p>
+<pre><code>.Grid-cell.u-full {
+  flex: 0 0 100%;
+}
+
+.Grid-cell.u-1of2 {
+  flex: 0 0 50%;
+}
+
+.Grid-cell.u-1of3 {
+  flex: 0 0 33.3333%;
+}
+
+.Grid-cell.u-1of4 {
+  flex: 0 0 25%;
+}
+</code></pre><h3 id="2-2圣杯布局"><a href="#2-2圣杯布局" class="headerlink" title="2.2圣杯布局"></a>2.2圣杯布局</h3><p>指的是一种最常见的网站布局。页面从上到下，分成三个部分：头部（header），躯干（body），尾部（footer）。其中躯干又水平分成三栏，从左到右为：导航、主栏、副栏。<br><a href="https://hufan-akari.github.io/solved-by-flexbox/demos/holy-grail/" target="_blank" rel="external">参考文档</a></p>
+<h3 id="2-3输入框布局"><a href="#2-3输入框布局" class="headerlink" title="2.3输入框布局"></a>2.3输入框布局</h3><p>我们常常需要在输入框的前方添加提示，后方添加按钮。</p>
+<pre><code>&lt;!-- appending --&gt;
+&lt;div class=&quot;InputAddOn&quot;&gt;
+    &lt;input class=&quot;InputAddOn-field&quot;&gt;
+    &lt;button class=&quot;InputAddOn-item&quot;&gt;…&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;!-- prepending --&gt;
+&lt;div class=&quot;InputAddOn&quot;&gt;
+    &lt;span class=&quot;InputAddOn-item&quot;&gt;…&lt;/span&gt;
+    &lt;input class=&quot;InputAddOn-field&quot;&gt;
+&lt;/div&gt;
+
+&lt;!-- both --&gt;
+&lt;div class=&quot;InputAddOn&quot;&gt;
+    &lt;span class=&quot;InputAddOn-item&quot;&gt;…&lt;/span&gt;
+    &lt;input class=&quot;InputAddOn-field&quot;&gt;
+    &lt;button class=&quot;InputAddOn-item&quot;&gt;…&lt;/button&gt;
+&lt;/div&gt;
+</code></pre><pre><code>.InputAddOn {
+  display: flex;
+  margin-bottom: 1.5em;
+}
+
+.InputAddOn-field {
+  flex: 1;
+}
+.InputAddOn-field:not(:first-child) {
+  border-left: 0;
+}
+.InputAddOn-field:not(:last-child) {
+  border-right: 0;
+}
+
+.InputAddOn-item {
+  background-color: rgba(147, 128, 108, 0.1);
+  color: #666666;
+  font: inherit;
+  font-weight: normal;
+}
+
+.InputAddOn-field,
+.InputAddOn-item {
+  border: 1px solid rgba(147, 128, 108, 0.25);
+  padding: 0.5em 0.75em;
+}
+.InputAddOn-field:first-child,
+.InputAddOn-item:first-child {
+  border-radius: 2px 0 0 2px;
+}
+.InputAddOn-field:last-child,
+.InputAddOn-item:last-child {
+  border-radius: 0 2px 2px 0;
+}
+</code></pre><h3 id="2-4圣杯布局"><a href="#2-4圣杯布局" class="headerlink" title="2.4圣杯布局"></a>2.4圣杯布局</h3><p>指的是一种最常见的网站布局。页面从上到下，分成三个部分：头部（header），躯干（body），尾部（footer）。其中躯干又水平分成三栏，从左到右为：导航、主栏、副栏。<br><a href="https://hufan-akari.github.io/solved-by-flexbox/demos/holy-grail/" target="_blank" rel="external">参考文档</a></p>
+<h3 id="2-5悬挂式布局"><a href="#2-5悬挂式布局" class="headerlink" title="2.5悬挂式布局"></a>2.5悬挂式布局</h3><p>有时，主栏的左侧或右侧，需要添加一个图片栏。<br><a href="https://hufan-akari.github.io/solved-by-flexbox/demos/media-object/" target="_blank" rel="external">参考文档</a></p>
+<h3 id="2-6垂直居中"><a href="#2-6垂直居中" class="headerlink" title="2.6垂直居中"></a>2.6垂直居中</h3><p><a href="https://hufan-akari.github.io/solved-by-flexbox/demos/vertical-centering/" target="_blank" rel="external">参考文档</a></p>
+</div><div class="article-meta" style="max-width:800px"></div><div class="article-comment" style="max-width:800px"><div class="ds-thread" id="ds-thread" data-thread-key="cj3lc5oxp000041a7mzcstuum" data-title="flex布局写法" data-url="http://yutingting945718425.github.io/2017/06/05/flex02/" site-name="ueibo"></div><script>var siteName = document.getElementById('ds-thread').getAttribute('site-name');
+var duoshuoQuery = {short_name: siteName};
+(function() {
+  var ds = document.createElement('script');
+  ds.type = 'text/javascript';ds.async = true;
+  ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  ds.charset = 'UTF-8';
+  (document.getElementsByTagName('head')[0] 
+  || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();</script></div><ul class="navication"><li class="home"><a href="/"><i class="icon icon-home"></i></a></li><li><a href="/2017/06/05/flex01/"><i class="icon icon-arror-right"></i></a></li></ul><div class="page-footer"><div class="top"><ul class="social"><li><a href="https://github.com/BoizZ" title="Github" target="_blank"><i class="icon icon-github"></i></a></li><li><a href="https://weibo.com/heqibang" title="Weibo" target="_blank"><i class="icon icon-weibo"></i></a></li><li><a href="https://www.segmentfault.com/u/bon" title="SegmentFault" target="_blank"><i class="icon icon-segmentfault"></i></a></li></ul></div><div class="bottom"><p class="copyright">© 2017 前端-小婷婷个人主页<br><small>POWER BY <a href="https://hexo.io" target="_blank">HEXO</a></small><small>, THEME BY <a href="https://github.com/BoizZ/hexo-theme-laughing" target="_blank">LAUGHING</a></small></p></div></div></div><script>var wrap = document.getElementById('wrap');
+window.onload = function () {
+  wrap.className += ' done';
+}</script></body></html>

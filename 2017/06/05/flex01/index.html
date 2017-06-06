@@ -1,0 +1,422 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"><meta name="format-detection" content="telephone=no"><meta name="format-detection" content="email=no"><meta name="description"><meta name="keywords" content="Hexo, Gruntjs, Nodejs, Reactjs, Vuejs"><title>flex布局语法 - 前端-小婷婷个人主页</title><link rel="stylesheet" href="/css/main_style.min.css"><link rel="icon" href="/favicon.ico"></head><body><input id="navi" type="checkbox"><ul class="main-navication"><li><a href="/"><span>Home</span></a></li><li><a href="https://github.com"><span>Github</span></a></li><li><a href="https://www.v2ex.com/"><span>V2EX</span></a></li></ul><div class="wrapper" id="wrap"><div class="post-header"><label class="navi-button light" for="navi">MENU</label><img class="background" src="http://callfiles.ueibo.com/hexo-theme-laughing/post_background.jpg"><div class="post-title"><h1 class="title">flex布局语法</h1><ul class="meta"><li><i class="icon icon-author"></i>前端-小婷婷</li><li><i class="icon icon-clock"></i>16 Minutes</li><li><i class="icon icon-calendar"></i>June 5, 2017</li></ul></div></div><div class="article-content" style="max-width:800px"><h1 id="flex布局学习："><a href="#flex布局学习：" class="headerlink" title="flex布局学习："></a>flex布局学习：</h1><p><a href="https://www.w3.org/TR/css-flexbox-1/" target="_blank" rel="external">w3c:https://www.w3.org/TR/css-flexbox-1/</a><br>什么让我有学习flex布局的冲动，在拿到邀请评价工作台设计稿的时候如图：<br><img src="/img/01.png" alt=""><br>考虑到如下几个问题：<br>1.基本都是左右布局，而且左右元素宽度要用百分比设置所以要考虑到大屏情况<br>2.快捷操作模块各个按钮布局，我的理解是先在父元素种设置等值的padding，再次让每个按钮margin-right;但是这里必须考虑到一个问题，在各个不同屏幕下的就想到了响应式布局；<br>3.而且目前我们这个项目只要考虑ie10+<br>综上这些问题我决定用flex布局试试。</p>
+<p>布局的传统解决方案，基于盒状模型，依赖 display 属性 + position属性 + float属性。它对于那些特殊布局非常不方便，比如，垂直居中就不容易实现。</p>
+<p>2009年，W3C 提出了一种新的方案—-Flex 布局，可以简便、完整、响应式地实现各种页面布局。目前，它已经得到了所有浏览器的支持，这意味着，现在就能很安全地使用这项功能。<br><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/flex?v=example" target="_blank" rel="external">参考：https://developer.mozilla.org/en-US/docs/Web/CSS/flex?v=example</a></p>
+<h2 id="flex布局是什么"><a href="#flex布局是什么" class="headerlink" title="flex布局是什么"></a>flex布局是什么</h2><p>Flex 是 Flexible Box 的缩写，意为”弹性布局”，用来为盒状模型提供最大的灵活性</p>
+<p>任何一个容器都可以指定为 Flex 布局</p>
+<pre><code>.box{
+    display:flex;
+}
+</code></pre><p>行内元素也可以使用flex布局</p>
+<pre><code>.box{
+    display:inline-flex;
+}
+</code></pre><p>Webkit 内核的浏览器，必须加上-webkit前缀</p>
+<pre><code>.box{
+    display: -webkit-flex; /* Safari */
+      display: flex;
+}
+</code></pre><p><strong>注意：设为flex布局以后，子元素float、clear和vertical-align属性将失效</strong></p>
+<h2 id="flex布局基本概念"><a href="#flex布局基本概念" class="headerlink" title="flex布局基本概念"></a>flex布局基本概念</h2><p>采用flex布局的元素，称为flex容器，简称容器。它的所有子元素自动成为容器成员，称为flex项目，简称项目</p>
+<h2 id="容器属性"><a href="#容器属性" class="headerlink" title="容器属性"></a>容器属性</h2><p>以下六个属性设置在容器上：</p>
+<pre><code>flex-direction
+flex-wrap
+flex-flow
+justify-content
+align-items
+align-content
+</code></pre><h3 id="flex-direction"><a href="#flex-direction" class="headerlink" title="flex-direction"></a>flex-direction</h3><p>此属性指定flex容器中如何设置flex项目，通过设置flex容器的主轴线的方向</p>
+<pre><code>
+.box{
+        flex-direction:row | row-reverse | column | column-reverse
+    }
+</code></pre><pre><code>&lt;div class=&quot;flex-container&quot;&gt;
+    &lt;div class=&quot;list list_1&quot;&gt;111&lt;/div&gt;
+    &lt;div class=&quot;list list_2&quot;&gt;222&lt;/div&gt;
+    &lt;div class=&quot;list list_3&quot;&gt;333&lt;/div&gt;
+&lt;/div&gt;
+</code></pre><h4 id="row-默认值-：主轴为水平方向，起点在左端"><a href="#row-默认值-：主轴为水平方向，起点在左端" class="headerlink" title="row(默认值)：主轴为水平方向，起点在左端"></a>row(默认值)：主轴为水平方向，起点在左端</h4><pre><code>.flex-container {
+    width: 600px;
+    height: 100px;
+    background: #333;
+    display: flex;
+    flex-direction: row;
+}
+.flex-container .list{
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    margin-right: 10px;
+}
+</code></pre><h4 id="row-reverse：主轴为水平方向，起点在右端"><a href="#row-reverse：主轴为水平方向，起点在右端" class="headerlink" title="row-reverse：主轴为水平方向，起点在右端"></a>row-reverse：主轴为水平方向，起点在右端</h4><pre><code>.flex-container {
+    width: 600px;
+    height: 100px;
+    background: #333;
+    display: flex;
+    flex-direction: row-reverse;
+}
+.flex-container .list{
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    margin-right: 10px;
+}
+</code></pre><h4 id="column：主轴为垂直方向，起点在上沿，从上往下"><a href="#column：主轴为垂直方向，起点在上沿，从上往下" class="headerlink" title="column：主轴为垂直方向，起点在上沿，从上往下"></a>column：主轴为垂直方向，起点在上沿，从上往下</h4><pre><code>.flex-container {
+    width: 300px;
+    height: 600px;
+    background: #333;
+    display: flex;
+    flex-direction: column;
+}
+.flex-container .list{
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    margin-top: 10px;
+}
+</code></pre><h4 id="column-reverse：主轴为垂直方向，起点在下沿，从下往上"><a href="#column-reverse：主轴为垂直方向，起点在下沿，从下往上" class="headerlink" title="column-reverse：主轴为垂直方向，起点在下沿，从下往上"></a>column-reverse：主轴为垂直方向，起点在下沿，从下往上</h4><pre><code>.flex-container {
+    width: 300px;
+    height: 600px;
+    background: #333;
+    display: flex;
+    flex-direction: column-reverse;
+}
+.flex-container .list{
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    margin-top: 10px;
+}
+</code></pre><h3 id="flex-wrap"><a href="#flex-wrap" class="headerlink" title="flex-wrap"></a>flex-wrap</h3><p>默认情况下，项目都是排在一条线上。该属性定义，如果一条轴线排不下，如何换行</p>
+<pre><code>.box{
+
+    flex-wrap: nowrap | wrap | wrap-reverse;
+
+}
+</code></pre><pre><code>&lt;div class=&quot;flex-container&quot;&gt;
+    &lt;div class=&quot;list list_1&quot;&gt;111&lt;/div&gt;
+    &lt;div class=&quot;list list_2&quot;&gt;222&lt;/div&gt;
+    &lt;div class=&quot;list list_3&quot;&gt;333&lt;/div&gt;
+    &lt;div class=&quot;list list_1&quot;&gt;444&lt;/div&gt;
+    &lt;div class=&quot;list list_2&quot;&gt;555&lt;/div&gt;
+    &lt;div class=&quot;list list_3&quot;&gt;666&lt;/div&gt;
+    &lt;div class=&quot;list list_1&quot;&gt;777&lt;/div&gt;
+    &lt;div class=&quot;list list_2&quot;&gt;888&lt;/div&gt;
+    &lt;div class=&quot;list list_3&quot;&gt;999&lt;/div&gt;
+    &lt;div class=&quot;list list_1&quot;&gt;1010&lt;/div&gt;
+    &lt;div class=&quot;list list_2&quot;&gt;1111&lt;/div&gt;
+    &lt;div class=&quot;list list_3&quot;&gt;1212&lt;/div&gt;
+&lt;/div&gt;
+</code></pre><h4 id="nowrap-默认值-：不换行"><a href="#nowrap-默认值-：不换行" class="headerlink" title="nowrap(默认值)：不换行"></a>nowrap(默认值)：不换行</h4><pre><code>
+.flex-container {
+    width: 300px;
+    height: 600px;
+    background: #333;
+    display: flex;
+    flex-direction: column-reverse;
+    flex-wrap: nowrap;
+}
+.flex-container .list{
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    margin-top: 10px;
+}
+</code></pre><h4 id="wrap：换行，第一行在上方"><a href="#wrap：换行，第一行在上方" class="headerlink" title="wrap：换行，第一行在上方"></a>wrap：换行，第一行在上方</h4><pre><code>
+.flex-container {
+    width: 300px;
+    height: 600px;
+    background: #333;
+    display: flex;
+    flex-direction: column-reverse;
+    flex-wrap: wrap;
+}
+.flex-container .list{
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    margin-top: 10px;
+}
+</code></pre><h4 id="wrap-reverse：换行，第一行在下方"><a href="#wrap-reverse：换行，第一行在下方" class="headerlink" title="wrap-reverse：换行，第一行在下方"></a>wrap-reverse：换行，第一行在下方</h4><pre><code>
+.flex-container {
+    width: 300px;
+    height: 600px;
+    background: #333;
+    display: flex;
+    flex-direction: column-reverse;
+    flex-wrap: wrap-reverse;
+}
+.flex-container .list{
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    margin-top: 10px;
+}
+</code></pre><h3 id="flex-flow"><a href="#flex-flow" class="headerlink" title="flex-flow"></a>flex-flow</h3><p>该属性是flex-direction和flex-wrap属性的简写形式，默认值row nowrap.</p>
+<pre><code>.box{
+    flex-flow: &lt;flex-direction&gt; || &lt;flex-wrap&gt;
+}
+</code></pre><h3 id="justify-content"><a href="#justify-content" class="headerlink" title="justify-content"></a>justify-content</h3><p>该属性定义项目在主轴上的对齐方式</p>
+<pre><code>.box{
+    justify-content:flex-start | flex-end | center
+                        space-between | space-around
+}
+</code></pre><p>具体对齐方式与轴的方向有关。下面假设主轴为从左到右</p>
+<h4 id="flext-start-默认值-：左对齐"><a href="#flext-start-默认值-：左对齐" class="headerlink" title="flext-start(默认值)：左对齐"></a>flext-start(默认值)：左对齐</h4><pre><code>
+.flex-container {
+    width: 600px;
+    height: 600px;
+    background: #333;
+    display: flex;
+    flex-direction: row;
+    justify-content:flex-start;
+}
+.flex-container .list{
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    margin-right:10px;
+}
+</code></pre><h4 id="flex-end：右对齐"><a href="#flex-end：右对齐" class="headerlink" title="flex-end：右对齐"></a>flex-end：右对齐</h4><pre><code>
+.flex-container {
+    width: 600px;
+    height: 600px;
+    background: #333;
+    display: flex;
+    flex-direction: row;
+    justify-content:flex-end;
+}
+.flex-container .list{
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    margin-right:10px;
+}
+</code></pre><h4 id="center：居中"><a href="#center：居中" class="headerlink" title="center：居中"></a>center：居中</h4><pre><code>
+.flex-container {
+    width: 600px;
+    height: 600px;
+    background: #333;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.flex-container .list{
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    margin-right:10px;
+}
+</code></pre><h4 id="space-between：两端对齐，项目之间的间隔都相等。"><a href="#space-between：两端对齐，项目之间的间隔都相等。" class="headerlink" title="space-between：两端对齐，项目之间的间隔都相等。"></a>space-between：两端对齐，项目之间的间隔都相等。</h4><pre><code>
+.flex-container {
+    width: 600px;
+    height: 600px;
+    background: #333;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.flex-container .list{
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    margin-right:10px;
+}
+</code></pre><h4 id="space-around：每个项目两侧的间隔相等。所以，项目之间的间隔比项目与边框的间隔大一倍。"><a href="#space-around：每个项目两侧的间隔相等。所以，项目之间的间隔比项目与边框的间隔大一倍。" class="headerlink" title="space-around：每个项目两侧的间隔相等。所以，项目之间的间隔比项目与边框的间隔大一倍。"></a>space-around：每个项目两侧的间隔相等。所以，项目之间的间隔比项目与边框的间隔大一倍。</h4><pre><code>
+.flex-container {
+    width: 600px;
+    height: 600px;
+    background: #333;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+.flex-container .list{
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    margin-right:10px;
+}
+</code></pre><h3 id="align-items"><a href="#align-items" class="headerlink" title="align-items"></a>align-items</h3><p>该属性定义项目在交叉轴上如何对齐。</p>
+<pre><code>.box{
+    align-items: flex-start | flex-end | center | baseline | stretch;
+}
+</code></pre><p>具体的对齐方式与交叉轴的方向有关，下面假设交叉轴从上到下。</p>
+<h4 id="flex-start：交叉轴的起点对齐。"><a href="#flex-start：交叉轴的起点对齐。" class="headerlink" title="flex-start：交叉轴的起点对齐。"></a>flex-start：交叉轴的起点对齐。</h4><pre><code>
+.flex-container {
+    width: 600px;
+    height: 600px;
+    background: #333;
+    display: flex;
+    flex-direction: row;
+    justify-content:flex-start;
+    align-items:flex-start;
+}
+.flex-container .list{
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    margin-right:10px;
+}
+</code></pre><h4 id="flex-end：交叉轴的终点对齐。"><a href="#flex-end：交叉轴的终点对齐。" class="headerlink" title="flex-end：交叉轴的终点对齐。"></a>flex-end：交叉轴的终点对齐。</h4><pre><code>
+.flex-container {
+    width: 600px;
+    height: 600px;
+    background: #333;
+    display: flex;
+    flex-direction: row;
+    justify-content:flex-start;
+    align-items:flex-end;
+}
+.flex-container .list{
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    margin-right:10px;
+}
+</code></pre><h4 id="center：交叉轴的中点对齐。"><a href="#center：交叉轴的中点对齐。" class="headerlink" title="center：交叉轴的中点对齐。"></a>center：交叉轴的中点对齐。</h4><pre><code>
+.flex-container {
+    width: 600px;
+    height: 600px;
+    background: #333;
+    display: flex;
+    flex-direction: row;
+    justify-content:flex-start;
+    align-items:flex-end;
+}
+.flex-container .list{
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    margin-right:10px;
+}
+</code></pre><h4 id="baseline：项目的第一行文字的基线对齐。"><a href="#baseline：项目的第一行文字的基线对齐。" class="headerlink" title="baseline：项目的第一行文字的基线对齐。"></a>baseline：项目的第一行文字的基线对齐。</h4><pre><code>
+.flex-container {
+    width: 600px;
+    height: 600px;
+    background: #333;
+    display: flex;
+    flex-direction: row;
+    justify-content:flex-start;
+    align-items:baseline;
+}
+.flex-container .list{
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    margin-right:10px;
+}
+.flex-container .list_2{
+    height: 50px;
+    line-height: 25px;
+}
+.flex-container .list_3{
+    height: 80px;
+    line-height: 30px;
+}
+.flex-container .list_4{
+    height: 150px;
+    line-height: 45px;
+}
+</code></pre><h4 id="stretch-默认值-：如果项目未设置高度或设为auto-将占满整个容器的高度。"><a href="#stretch-默认值-：如果项目未设置高度或设为auto-将占满整个容器的高度。" class="headerlink" title="stretch(默认值)：如果项目未设置高度或设为auto,将占满整个容器的高度。"></a>stretch(默认值)：如果项目未设置高度或设为auto,将占满整个容器的高度。</h4><pre><code>
+.flex-container {
+    width: 600px;
+    height: 600px;
+    background: #333;
+    display: flex;
+    flex-direction: row;
+    justify-content:flex-start;
+    align-items:stretch;
+}
+.flex-container .list{
+    /*width: 100px;
+    height: 100px;*/
+    background-color: red;
+    margin-right:10px;
+}
+</code></pre><h3 id="align-content"><a href="#align-content" class="headerlink" title="align-content"></a>align-content</h3><p>属性定义了多根轴线的对齐方式。如果项目只有一根轴线，该属性不起作用</p>
+<pre><code>.box{
+
+    align-content: flex-start | flex-end | center | space-between | space-around | stretch;
+}
+</code></pre><h2 id="项目属性"><a href="#项目属性" class="headerlink" title="项目属性"></a>项目属性</h2><p>以下六个属性设置在容器上：</p>
+<pre><code>order
+flex-grow
+flex-shrink
+flex-basis
+flex
+align-self
+</code></pre><pre><code>&lt;div class=&quot;flex-container&quot;&gt;
+    &lt;div class=&quot;list list_1&quot;&gt;111&lt;/div&gt;
+    &lt;div class=&quot;list list_2&quot;&gt;222&lt;/div&gt;
+    &lt;div class=&quot;list list_3&quot;&gt;333&lt;/div&gt;
+    &lt;div class=&quot;list list_4&quot;&gt;444&lt;/div&gt;
+    &lt;div class=&quot;list list_5&quot;&gt;555&lt;/div&gt;
+    &lt;div class=&quot;list list_6&quot;&gt;666&lt;/div&gt;
+    &lt;div class=&quot;list list_7&quot;&gt;777&lt;/div&gt;
+&lt;/div&gt;
+</code></pre><h3 id="order"><a href="#order" class="headerlink" title="order"></a>order</h3><p>此属性定义项目的排列顺序。数值越小，排列越靠前，默认为0</p>
+<pre><code>.item {
+  order: &lt;integer&gt;;
+}
+</code></pre><pre><code>.flex-container {
+    width: 600px;
+    height: 600px;
+    background: #333;
+    display: flex;
+    flex-direction: row;
+    justify-content:flex-start;
+    align-items:flex-start;
+}
+.flex-container .list{
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    margin-right:10px;
+}
+.flex-container .list_1{
+    order: 2;
+}
+.flex-container .list_2{
+    order: 1;
+}
+.flex-container .list_3{
+    order: 3;
+}
+</code></pre><h3 id="flex-grow"><a href="#flex-grow" class="headerlink" title="flex-grow"></a>flex-grow</h3><p>此属性定义项目的放大比例，默认为0，即如果存在剩余空间，也不放大。</p>
+<pre><code>item{
+    flex-grow:&lt;number&gt;
+}
+</code></pre><p>如果所有项目的flex－grow属性为1，则它们将等分剩余空间。如果有个项目的flex-grow属性为2，其它项目都为1，则前者占据的剩余空间将比其他项目多一倍</p>
+<h3 id="flex-shrink"><a href="#flex-shrink" class="headerlink" title="flex-shrink"></a>flex-shrink</h3><p>此属性定义项目的缩小比例，默认为1，即如果空间不足，该项目将缩小</p>
+<pre><code>item{
+    flex-shrink:&lt;number&gt;
+}
+如果所有项目的flex-shrink属性都为1，当空间不足时，都将等比例缩小。如果一个项目的flex-shrink属性为0，其他项目都为1，则空间不足时，前者不缩小
+</code></pre><h3 id="flex-basis"><a href="#flex-basis" class="headerlink" title="flex-basis"></a>flex-basis</h3><p>此属性定义在分配多余空间之前，项目占据的主轴空间。浏览器根据这个属性，计算主轴是否有多余空间。它的默认值为auto，即项目的本来大小</p>
+<pre><code>.item{
+    flex-basis: &lt;length&gt; | auto; /* default auto */
+}
+</code></pre><p>它可以设为跟width或height属性一样的值（比如350px），则项目将占据固定空间。</p>
+<h3 id="flex"><a href="#flex" class="headerlink" title="flex"></a>flex</h3><p>此属性是flex-grow, flex-shrink 和 flex-basis的简写，默认值为0 1 auto。后两个属性可选。</p>
+<pre><code>.item {
+    flex: none | [ &lt;&#39;flex-grow&#39;&gt; &lt;&#39;flex-shrink&#39;&gt;? || &lt;&#39;flex-            basis&#39;&gt; ]
+}
+</code></pre><p>该属性有两个快捷值：auto (1 1 auto) 和 none (0 0 auto)。<br>建议优先使用这个属性，而不是单独写三个分离的属性，因为浏览器会推算相关值。</p>
+<h3 id="align-self"><a href="#align-self" class="headerlink" title="align-self"></a>align-self</h3><p>此属性属性允许单个项目有与其他项目不一样的对齐方式，可覆盖align-items属性。默认值为auto，表示继承父元素的align-items属性，如果没有父元素，则等同于stretch。</p>
+<pre><code>.item {
+    align-self: auto | flex-start | flex-end | center | baseline | stretch;
+}
+</code></pre><p>该属性有两个快捷值：auto (1 1 auto) 和 none (0 0 auto)。<br>建议优先使用这个属性，而不是单独写三个分离的属性，因为浏览器会推算相关值。</p>
+</div><div class="article-meta" style="max-width:800px"></div><div class="article-comment" style="max-width:800px"><div class="ds-thread" id="ds-thread" data-thread-key="cj3lc5oxw000241a7w1zq29qm" data-title="flex布局语法" data-url="http://yutingting945718425.github.io/2017/06/05/flex01/" site-name="ueibo"></div><script>var siteName = document.getElementById('ds-thread').getAttribute('site-name');
+var duoshuoQuery = {short_name: siteName};
+(function() {
+  var ds = document.createElement('script');
+  ds.type = 'text/javascript';ds.async = true;
+  ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  ds.charset = 'UTF-8';
+  (document.getElementsByTagName('head')[0] 
+  || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();</script></div><ul class="navication"><li class="home"><a href="/"><i class="icon icon-home"></i></a></li><li><a href="/2017/06/05/flex02/"><i class="icon icon-arror-left"></i></a></li><li><a href="/2017/05/11/strategy/"><i class="icon icon-arror-right"></i></a></li></ul><div class="page-footer"><div class="top"><ul class="social"><li><a href="https://github.com/BoizZ" title="Github" target="_blank"><i class="icon icon-github"></i></a></li><li><a href="https://weibo.com/heqibang" title="Weibo" target="_blank"><i class="icon icon-weibo"></i></a></li><li><a href="https://www.segmentfault.com/u/bon" title="SegmentFault" target="_blank"><i class="icon icon-segmentfault"></i></a></li></ul></div><div class="bottom"><p class="copyright">© 2017 前端-小婷婷个人主页<br><small>POWER BY <a href="https://hexo.io" target="_blank">HEXO</a></small><small>, THEME BY <a href="https://github.com/BoizZ/hexo-theme-laughing" target="_blank">LAUGHING</a></small></p></div></div></div><script>var wrap = document.getElementById('wrap');
+window.onload = function () {
+  wrap.className += ' done';
+}</script></body></html>
