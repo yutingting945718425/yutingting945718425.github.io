@@ -1,0 +1,157 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"><meta name="format-detection" content="telephone=no"><meta name="format-detection" content="email=no"><meta name="description"><meta name="keywords" content="Hexo, Gruntjs, Nodejs, Reactjs, Vuejs"><title>vue组件之间几种通信方式（非父子组件间的通信） - 前端-小婷婷个人主页</title><link rel="stylesheet" href="/css/main_style.min.css"><link rel="icon" href="/favicon.ico"></head><body><input id="navi" type="checkbox"><ul class="main-navication"><li><a href="/"><span>Home</span></a></li><li><a href="https://github.com"><span>Github</span></a></li><li><a href="https://www.v2ex.com/"><span>V2EX</span></a></li></ul><div class="wrapper" id="wrap"><div class="post-header"><label class="navi-button light" for="navi">MENU</label><img class="background" src="http://callfiles.ueibo.com/hexo-theme-laughing/post_background.jpg"><div class="post-title"><h1 class="title">vue组件之间几种通信方式（非父子组件间的通信）</h1><ul class="meta"><li><i class="icon icon-author"></i>前端-小婷婷</li><li><i class="icon icon-clock"></i>4 Minutes</li><li><i class="icon icon-calendar"></i>October 15, 2017</li></ul></div></div><div class="article-content" style="max-width:800px"><h1 id="1、接着介绍非父子组件间几种通信方式"><a href="#1、接着介绍非父子组件间几种通信方式" class="headerlink" title="1、接着介绍非父子组件间几种通信方式"></a>1、接着介绍非父子组件间几种通信方式</h1><hr>
+<h3 id="1-1-官方推荐的event-bus"><a href="#1-1-官方推荐的event-bus" class="headerlink" title="1.1 官方推荐的event bus"></a>1.1 官方推荐的event bus</h3><p>可以全局创建一个空的vue实例，在任何一个组件中让空的vue实例$emit触发一个事件，在另一个组件中让空的vue实例$on监听事件<br>之前在做一个项目的时候，页面中用到了下拉框的组件，当切换下拉框值和点击到下拉框范围之外的地方就要收起下拉框如下:</p>
+<p>空vue实例eventBus.js</p>
+<pre><code class="javascript">import Vue from &#39;vue&#39;
+
+const eventBus = new Vue()
+
+export { eventBus }
+</code></pre>
+<p>下拉框组件select.vue</p>
+<pre><code class="javascript">&lt;template&gt;
+    &lt;div class=&quot;selection-component&quot;&gt;
+      &lt;div class=&quot;selection-show&quot; @click=&quot;toggleDrop&quot;&gt;
+        &lt;span&gt;{{ selections[nowIndex].label }}&lt;/span&gt;
+        &lt;div class=&quot;arrow&quot;&gt;&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;selection-list&quot; v-if=&quot;isDrop&quot;&gt;
+        &lt;ul&gt;
+          &lt;li v-for=&quot;(item,index) in selections&quot; @click=&quot;chooseSelection(index)&quot;&gt;
+            {{ item.label }}
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+
+import { eventBus } from &#39;../eventBus&#39;
+export default {
+    props:{
+        selections: {
+            type:Array,
+            default: [{
+                label: &#39;test&#39;,
+                value: 0
+            }]
+        }
+    },
+    data () {
+        return {
+            isDrop: false,
+            nowIndex: 0
+        }
+    },
+    mounted () {
+      eventBus.$on(&#39;reset-component&#39;, () =&gt; {
+        this.isDrop = false;
+      })
+    },
+    methods:{
+      toggleDrop (event) {
+
+        event.stopPropagation();
+        eventBus.$emit(&#39;reset-component&#39;);
+        this.isDrop = ! this.isDrop;
+      },
+      chooseSelection(index){
+        this.nowIndex = index;
+        this.$emit(&#39;on-change&#39;,this.selections[this.nowIndex]);
+      }
+    }
+}
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+.selection-component {
+  position: relative;
+  display: inline-block;
+}
+.selection-show {
+  border: 1px solid #e3e3e3;
+  padding: 0 20px 0 10px;
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  height: 25px;
+  line-height: 25px;
+  border-radius: 3px;
+  background: #fff;
+}
+.selection-show .arrow {
+  display: inline-block;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid #e3e3e3;
+  width: 0;
+  height: 0;
+  margin-top: -1px;
+  margin-left: 6px;
+  margin-right: -14px;
+  vertical-align: middle;
+}
+.selection-list {
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  top: 25px;
+  width: 100%;
+  background: #fff;
+  border-top: 1px solid #e3e3e3;
+  border-bottom: 1px solid #e3e3e3;
+  z-index: 5;
+}
+.selection-list li {
+  padding: 5px 15px 5px 10px;
+  border-left: 1px solid #e3e3e3;
+  border-right: 1px solid #e3e3e3;
+  cursor: pointer;
+  background: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+}
+.selection-list li:hover {
+  background: #e3e3e3;
+}
+&lt;/style&gt;
+</code></pre>
+<p>最外层组件上layout.vue</p>
+<pre><code class="javascript">&lt;template&gt;
+ &lt;div @click=&quot;resetComponent&quot;&gt;
+     &lt;router-view&gt;&lt;/router-view&gt;
+ &lt;/div&gt;
+&lt;/template&gt;
+&lt;script&gt;
+import { eventBus } from &#39;../eventBus&#39;
+ export default {
+     data () {
+         return {
+
+         }
+     },
+     methods:{
+         resetComponent () {
+              eventBus.$emit(&#39;reset-component&#39;)
+         }
+     }
+ }
+&lt;/script&gt;
+</code></pre>
+<p>参考：<a href="https://cn.vuejs.org/v2/guide/components.html#非父子组件的通信" target="_blank" rel="external">https://cn.vuejs.org/v2/guide/components.html#非父子组件的通信</a></p>
+<h3 id="1-2-状态管理模式vuex"><a href="#1-2-状态管理模式vuex" class="headerlink" title="1.2 状态管理模式vuex"></a>1.2 状态管理模式vuex</h3><p>vuex我就不做详细介绍了 想要了解的可以看看官网的vuex<br>参考：<a href="https://vuex.vuejs.org/zh-cn/" target="_blank" rel="external">https://vuex.vuejs.org/zh-cn/</a></p>
+</div><div class="article-meta" style="max-width:800px"></div><div class="article-comment" style="max-width:800px"><div class="ds-thread" id="ds-thread" data-thread-key="cj8su2ssu0005fwjlpl0waurg" data-title="vue组件之间几种通信方式（非父子组件间的通信）" data-url="http://yutingting945718425.github.io/2017/10/15/vue02/" site-name="ueibo"></div><script>var siteName = document.getElementById('ds-thread').getAttribute('site-name');
+var duoshuoQuery = {short_name: siteName};
+(function() {
+  var ds = document.createElement('script');
+  ds.type = 'text/javascript';ds.async = true;
+  ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  ds.charset = 'UTF-8';
+  (document.getElementsByTagName('head')[0] 
+  || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();</script></div><ul class="navication"><li class="home"><a href="/"><i class="icon icon-home"></i></a></li><li><a href="/2017/10/15/vue01/"><i class="icon icon-arror-right"></i></a></li></ul><div class="page-footer"><div class="top"><ul class="social"><li><a href="https://github.com/BoizZ" title="Github" target="_blank"><i class="icon icon-github"></i></a></li><li><a href="https://weibo.com/heqibang" title="Weibo" target="_blank"><i class="icon icon-weibo"></i></a></li><li><a href="https://www.segmentfault.com/u/bon" title="SegmentFault" target="_blank"><i class="icon icon-segmentfault"></i></a></li></ul></div><div class="bottom"><p class="copyright">© 2017 前端-小婷婷个人主页<br><small>POWER BY <a href="https://hexo.io" target="_blank">HEXO</a></small><small>, THEME BY <a href="https://github.com/BoizZ/hexo-theme-laughing" target="_blank">LAUGHING</a></small></p></div></div></div><script>var wrap = document.getElementById('wrap');
+window.onload = function () {
+  wrap.className += ' done';
+}</script></body></html>

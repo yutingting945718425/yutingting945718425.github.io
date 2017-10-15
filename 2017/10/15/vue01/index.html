@@ -1,0 +1,254 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=Edge"><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"><meta name="format-detection" content="telephone=no"><meta name="format-detection" content="email=no"><meta name="description"><meta name="keywords" content="Hexo, Gruntjs, Nodejs, Reactjs, Vuejs"><title>vue组件之间几种通信方式(父子组件间通信) - 前端-小婷婷个人主页</title><link rel="stylesheet" href="/css/main_style.min.css"><link rel="icon" href="/favicon.ico"></head><body><input id="navi" type="checkbox"><ul class="main-navication"><li><a href="/"><span>Home</span></a></li><li><a href="https://github.com"><span>Github</span></a></li><li><a href="https://www.v2ex.com/"><span>V2EX</span></a></li></ul><div class="wrapper" id="wrap"><div class="post-header"><label class="navi-button light" for="navi">MENU</label><img class="background" src="http://callfiles.ueibo.com/hexo-theme-laughing/post_background.jpg"><div class="post-title"><h1 class="title">vue组件之间几种通信方式(父子组件间通信)</h1><ul class="meta"><li><i class="icon icon-author"></i>前端-小婷婷</li><li><i class="icon icon-clock"></i>9 Minutes</li><li><i class="icon icon-calendar"></i>October 15, 2017</li></ul></div></div><div class="article-content" style="max-width:800px"><p>出发点：在用vue做项目过程中，对vue理解的不够透彻可能遇到问题时，想到的对应解决办法也比较少，这都是对该框架底层理解不够；在这条道路上我选择想去看看elemnet ui对vue运用，在学习的过程中，就有对vue实现方式总结；自己也是在学习中总结，都是基于自己能力的理解，可能不是很全面很透彻，如果哪里有问题希望大神们多多指导。</p>
+<p>vue组件之间通信分为两大点：1.父子组件间的通信 2、非父子组件间的通信</p>
+<h1 id="1、首先介绍父子组件间几种通信方式"><a href="#1、首先介绍父子组件间几种通信方式" class="headerlink" title="1、首先介绍父子组件间几种通信方式"></a>1、首先介绍父子组件间几种通信方式</h1><hr>
+<h3 id="1-1-props-down、events-up"><a href="#1-1-props-down、events-up" class="headerlink" title="1.1 props down、events up"></a>1.1 props down、events up</h3><p>父组件通过props向下传递数据给子组件，子组件通过events 给父组件发送信息；组件实例的作用域是孤立的，单向数据流，这意味着不能在子组件的模版内直接引用父组件的数据；父组件的数据需要通过props才能下发到子组件中，如果子组件需要把信息传达给父组件，需要使用v-on绑定自定义事件如下：</p>
+<p>父组件 test01.vue</p>
+<pre><code class="javascript">&lt;template&gt;
+    &lt;div class=&quot;sales-board&quot; style=&quot;padding:30px;&quot;&gt;
+        &lt;h3&gt;props down 、events up&lt;/h3&gt;
+        &lt;v-selection :selections=&quot;testSelection&quot; @on-change=&quot;onParamChange&quot;&gt;&lt;/v-selection&gt;
+    &lt;/div&gt;
+&lt;/template&gt;
+&lt;script&gt;
+    import VSelection from &#39;../../components/select&#39;
+    export default {
+        components:{
+           VSelection 
+        },
+        data () {
+            return {
+                testSelection:[
+                    {
+                        label:&#39;入门版&#39;,
+                        value:0
+                    },
+                    {
+                        label: &#39;中级版&#39;,
+                        value: 1
+                    },
+                    {
+                        label: &#39;高级版&#39;,
+                        value: 2
+                    }
+                ]
+            }
+        },
+        methods:{
+            onParamChange (val){
+                console.log(&quot;当前选择的下拉框的值为:&quot;+val)
+            }
+        }
+    }
+&lt;/script&gt;
+</code></pre>
+<p>子组件 select.vue</p>
+<pre><code class="javascript">&lt;template&gt;
+    &lt;div class=&quot;selection-component&quot;&gt;
+      &lt;div class=&quot;selection-show&quot; @click=&quot;toggleDrop&quot;&gt;
+        &lt;span&gt;{{ selections[nowIndex].label }}&lt;/span&gt;
+        &lt;div class=&quot;arrow&quot;&gt;&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;selection-list&quot; v-if=&quot;isDrop&quot;&gt;
+        &lt;ul&gt;
+          &lt;li v-for=&quot;(item,index) in selections&quot; @click=&quot;chooseSelection(index)&quot;&gt;
+            {{ item.label }}
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+
+import { eventBus } from &#39;../eventBus&#39;
+export default {
+    props:{
+        selections: {
+            type:Array,
+            default: [{
+                label: &#39;test&#39;,
+                value: 0
+            }]
+        }
+    },
+    data () {
+        return {
+            isDrop: false,
+            nowIndex: 0
+        }
+    },
+    mounted () {
+      eventBus.$on(&#39;reset-component&#39;, () =&gt; {
+        this.isDrop = false;
+      })
+    },
+    methods:{
+      toggleDrop (event) {
+
+        event.stopPropagation();
+        eventBus.$emit(&#39;reset-component&#39;);
+        this.isDrop = ! this.isDrop;
+      },
+      chooseSelection(index){
+        this.nowIndex = index;
+        this.$emit(&#39;on-change&#39;,this.selections[this.nowIndex]);
+      }
+    }
+}
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+.selection-component {
+  position: relative;
+  display: inline-block;
+}
+.selection-show {
+  border: 1px solid #e3e3e3;
+  padding: 0 20px 0 10px;
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  height: 25px;
+  line-height: 25px;
+  border-radius: 3px;
+  background: #fff;
+}
+.selection-show .arrow {
+  display: inline-block;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid #e3e3e3;
+  width: 0;
+  height: 0;
+  margin-top: -1px;
+  margin-left: 6px;
+  margin-right: -14px;
+  vertical-align: middle;
+}
+.selection-list {
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  top: 25px;
+  width: 100%;
+  background: #fff;
+  border-top: 1px solid #e3e3e3;
+  border-bottom: 1px solid #e3e3e3;
+  z-index: 5;
+}
+.selection-list li {
+  padding: 5px 15px 5px 10px;
+  border-left: 1px solid #e3e3e3;
+  border-right: 1px solid #e3e3e3;
+  cursor: pointer;
+  background: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+}
+.selection-list li:hover {
+  background: #e3e3e3;
+}
+&lt;/style&gt;
+</code></pre>
+<p>总结：父组件test01.vue中props selections属性和v-on:change事件，还需要注意的props传递值只能父组件向子组件传递，不能反回来，每当父组件更新时，子组件中的props会自动更新，如果在子组件中更改props属性的值，vue控制台会给出warning，因此如果需要在子组件中更改props，通常我会computed中赋给某个变量，再去更改这个变量的值</p>
+<p>参考：[<a href="https://cn.vuejs.org/v2/guide/components.html" target="_blank" rel="external">https://cn.vuejs.org/v2/guide/components.html</a>]<br>(<a href="https://cn.vuejs.org/v2/guide/components.html" target="_blank" rel="external">https://cn.vuejs.org/v2/guide/components.html</a>)<br><a href="https://cn.vuejs.org/v2/guide/components.html" target="_blank" rel="external">https://cn.vuejs.org/v2/guide/components.html</a></p>
+<h3 id="1-2-sync修饰符"><a href="#1-2-sync修饰符" class="headerlink" title="1.2 sync修饰符"></a>1.2 sync修饰符</h3><p>vue官网有对这个进行介绍，我的理解是当只改变父组件某个值，没有其它任何其它动作行为，可以用到这个修饰符，:foo.sync=”bar” 在编译的时候vue会把它会被扩展为 :foo=”bar” @update:foo=”val =&gt; bar = val”，在子组件中要去触发this.$emit(‘update:foo’, newValue)如下：</p>
+<p>父组件 test02.vue</p>
+<pre><code class="javascript">&lt;template&gt;
+    &lt;div class=&quot;sales-board&quot; style=&quot;padding:30px;&quot;&gt;
+        &lt;h3&gt;sync修饰符&lt;/h3&gt;
+        &lt;v-sync :showFlag.sync=&quot;showFlag&quot;&gt;&lt;/v-sync&gt;
+    &lt;/div&gt;
+&lt;/template&gt;
+&lt;script&gt;
+    import VSync from &#39;../../components/test/snycTest&#39;
+    export default {
+        components:{
+           VSync 
+        },
+        data () {
+            return {
+                showFlag:true
+            }
+        }
+    }
+&lt;/script&gt;
+</code></pre>
+<p>子组件 snycTest.vue</p>
+<pre><code class="javascript">&lt;template&gt;
+    &lt;div&gt;
+        &lt;div v-if=&quot;showFlag&quot;&gt;11111&lt;/div&gt;
+        &lt;button @click=&quot;changeShowFlag&quot;&gt;改变父元素showFlag的值&lt;/button&gt;
+    &lt;/div&gt;
+&lt;/template&gt;
+&lt;script&gt;
+    export default {
+        props:{
+            showFlag:Boolean
+        },
+        data () {
+            return {
+
+            }
+        },
+        methods:{
+            changeShowFlag () {
+                this.$emit(&#39;update:showFlag&#39;,!this.showFlag);
+            }
+        }
+    }
+&lt;/script&gt;
+</code></pre>
+<p>参考:<a href="https://cn.vuejs.org/v2/guide/components.html#sync-修饰符" target="_blank" rel="external">https://cn.vuejs.org/v2/guide/components.html#sync-修饰符</a></p>
+<h3 id="1-3-vue1-0可以通过-dispatch-和-broadcast解决，但是vue2-0-废弃我们可以看看element-ui对这些方法的扩展"><a href="#1-3-vue1-0可以通过-dispatch-和-broadcast解决，但是vue2-0-废弃我们可以看看element-ui对这些方法的扩展" class="headerlink" title="1.3 vue1.0可以通过$dispatch 和 $broadcast解决，但是vue2.0 废弃我们可以看看element ui对这些方法的扩展"></a>1.3 vue1.0可以通过$dispatch 和 $broadcast解决，但是vue2.0 废弃我们可以看看element ui对这些方法的扩展</h3><p>Element的broadcast的实现源码：</p>
+<pre><code class="javascript">function broadcast(componentName, eventName, params) {
+//遍历所有的子组件
+  this.$children.forEach(child =&gt; {
+    var name = child.$options.componentName;
+    //寻找符合制定名称的子组件
+    if (name === componentName) {
+        //在符合的子组件上触发事件
+      child.$emit.apply(child, [eventName].concat(params));
+    } else {
+    //不符合继续寻找它的子集（孙子组件）
+      broadcast.apply(child, [componentName, eventName].concat([params]));
+    }
+  });
+}
+</code></pre>
+<p>总结：1.在Element中broadcast（事件广播）方法需要3个参数，componentName组件名称, eventName事件名,和params数据。</p>
+<p>2‘broadcast是寻找所有子孙组件中，组件名为componentName的组件，若找到在其组件上触发（$emit）eventName的事件方法，数据为params。</p>
+<p>3.假设若有3个子组件或孙子组件的组件名为指定的componentName的话，这三个组件上都会触发其指定的事件方法。</p>
+<p>Element的dispatch的实现：</p>
+<pre><code class="javascript">dispatch(componentName, eventName, params) {
+      var parent = this.$parent || this.$root;
+      var name = parent.$options.componentName;
+
+      while (parent &amp;&amp; (!name || name !== componentName)) {
+        parent = parent.$parent;
+
+        if (parent) {
+          name = parent.$options.componentName;
+        }
+      }
+      if (parent) {
+        parent.$emit.apply(parent, [eventName].concat(params));
+      }
+}
+</code></pre>
+<p>总结：3个参数跟broadcast事件一样，这里是查找该组件的所有父组件，直接找到符合条件的父组件，并触发其指定的事件方法，感觉类似jquery中的cloest,例子我就不再这里说了<br>参考<a href="http://www.cnblogs.com/xxcanghai/p/Vue-kuang-jiaElement-de-shi-jian-chuan-dibroadcast.html" target="_blank" rel="external">http://www.cnblogs.com/xxcanghai/p/Vue-kuang-jiaElement-de-shi-jian-chuan-dibroadcast.html</a></p>
+</div><div class="article-meta" style="max-width:800px"></div><div class="article-comment" style="max-width:800px"><div class="ds-thread" id="ds-thread" data-thread-key="cj8su2ssr0004fwjl94usmj97" data-title="vue组件之间几种通信方式(父子组件间通信)" data-url="http://yutingting945718425.github.io/2017/10/15/vue01/" site-name="ueibo"></div><script>var siteName = document.getElementById('ds-thread').getAttribute('site-name');
+var duoshuoQuery = {short_name: siteName};
+(function() {
+  var ds = document.createElement('script');
+  ds.type = 'text/javascript';ds.async = true;
+  ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  ds.charset = 'UTF-8';
+  (document.getElementsByTagName('head')[0] 
+  || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();</script></div><ul class="navication"><li class="home"><a href="/"><i class="icon icon-home"></i></a></li><li><a href="/2017/10/15/vue02/"><i class="icon icon-arror-left"></i></a></li><li><a href="/2017/06/05/flex02/"><i class="icon icon-arror-right"></i></a></li></ul><div class="page-footer"><div class="top"><ul class="social"><li><a href="https://github.com/BoizZ" title="Github" target="_blank"><i class="icon icon-github"></i></a></li><li><a href="https://weibo.com/heqibang" title="Weibo" target="_blank"><i class="icon icon-weibo"></i></a></li><li><a href="https://www.segmentfault.com/u/bon" title="SegmentFault" target="_blank"><i class="icon icon-segmentfault"></i></a></li></ul></div><div class="bottom"><p class="copyright">© 2017 前端-小婷婷个人主页<br><small>POWER BY <a href="https://hexo.io" target="_blank">HEXO</a></small><small>, THEME BY <a href="https://github.com/BoizZ/hexo-theme-laughing" target="_blank">LAUGHING</a></small></p></div></div></div><script>var wrap = document.getElementById('wrap');
+window.onload = function () {
+  wrap.className += ' done';
+}</script></body></html>
